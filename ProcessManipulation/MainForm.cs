@@ -22,9 +22,11 @@ namespace ProcessManipulation
 		List<Process> processes= new List<Process>();
 		int counter = 0;
 		delegate void ProcessDelegate(Process process);
+		string directory;
 		public MainForm()
 		{
 			InitializeComponent();
+			directory=Application.StartupPath;
 			LoadAvailableAssemblies();
 		}
 		private void process_Exited(object sender, EventArgs e)
@@ -40,15 +42,26 @@ namespace ProcessManipulation
 				SetChildWindowText(process.MainWindowHandle, $"Child process {i+1}");
 			}
 		}
+		private void process_OutputDataReceived(object sender, EventArgs e)
+		{
+			Process process = sender as Process;
+			SendMessage(process.MainWindowHandle, WM_SETTEXT, (System.IntPtr)0, $"Child process №{processes.Count}");
+		}
 		void LoadAvailableAssemblies()
 		{
-			string except=new FileInfo(Application.ExecutablePath).Name.Split('.').First();
-			string[] files = Directory.GetFiles(Application.StartupPath,"*.exe");
+			listBoxAvalibleAssembles.Items.Clear();
+			//string except=new FileInfo(Application.ExecutablePath).Name.Split('.').First();
+			//string[] files = Directory.GetFiles(Application.StartupPath,"*.exe");
+			string[] files = Directory.GetFiles(directory,"*.exe");
 			for (int i=0;i<files.Length;i++)
 			{
 				listBoxAvalibleAssembles.Items.Add(files[i].Split('\\').Last().Split('.').First());
 			}
-			listBoxAvalibleAssembles.Items.Remove(except);
+			if(directory==Application.StartupPath)
+			{
+				string except=new FileInfo(Application.ExecutablePath).Name.Split('.').First();
+				listBoxAvalibleAssembles.Items.Remove(except);
+			}
 		}
 		void RunProcess(string assemblyName)
 		{
@@ -56,11 +69,16 @@ namespace ProcessManipulation
 			processes.Add(process);
 			if(Process.GetCurrentProcess().Id == GetParentProcessId(process.Id)) 
 			{
-				MessageBox.Show($"{process.ProcessName} является дочерним процессом");
+				//MessageBox.Show($"{process.ProcessName} является дочерним процессом");
 			}
 			process.EnableRaisingEvents = true;
 			process.Exited+= process_Exited;
+			process.OutputDataReceived+= process_OutputDataReceived;
+			while(!process.Responding)
+			{
 			SendMessage(process.MainWindowHandle, WM_SETTEXT, (System.IntPtr)0, $"Child process №{processes.Count}");
+			}
+			//SetChildWindowText(process.MainWindowHandle, $"Child process №{processes.Count}");
 			//listBoxStartedAssembles.Items.Add(process.ProcessName);
 			//listBoxAvalibleAssembles.Items.Remove(process.ProcessName);
 			MovingItem(listBoxAvalibleAssembles,listBoxStartedAssembles,process.ProcessName);
@@ -132,7 +150,13 @@ namespace ProcessManipulation
 
 		private void buttonBrowse_Click(object sender, EventArgs e)
 		{
-			
+			FolderBrowserDialog dialog= new FolderBrowserDialog();
+			dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+			dialog.SelectedPath = directory;
+			dialog.ShowDialog();
+			directory = dialog.SelectedPath;
+			//MessageBox.Show(this, directory, "Selected folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			LoadAvailableAssemblies();
 		}
 	}
 }
