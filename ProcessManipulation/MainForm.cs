@@ -119,6 +119,7 @@ namespace ProcessManipulation
 				object obj = listBoxStartedAssembles.SelectedItem;
 				listBoxStartedAssembles.Items.Remove(obj);
 				ExecuteOnProcessByName(obj.ToString(), Kill);
+			
 			}	
 		}
 	}
