@@ -36,6 +36,7 @@
 			this.buttonStop = new System.Windows.Forms.Button();
 			this.buttonCloseWindow = new System.Windows.Forms.Button();
 			this.buttonRefresh = new System.Windows.Forms.Button();
+			this.buttonBrowse = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// listBoxAvalibleAssembles
@@ -112,11 +113,22 @@
 			this.buttonRefresh.Text = "Refresh";
 			this.buttonRefresh.UseVisualStyleBackColor = true;
 			// 
+			// buttonBrowse
+			// 
+			this.buttonBrowse.Location = new System.Drawing.Point(330, 183);
+			this.buttonBrowse.Name = "buttonBrowse";
+			this.buttonBrowse.Size = new System.Drawing.Size(140, 29);
+			this.buttonBrowse.TabIndex = 8;
+			this.buttonBrowse.Text = "Browse";
+			this.buttonBrowse.UseVisualStyleBackColor = true;
+			this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.buttonBrowse);
 			this.Controls.Add(this.buttonRefresh);
 			this.Controls.Add(this.buttonCloseWindow);
 			this.Controls.Add(this.buttonStop);
@@ -143,6 +155,7 @@
 		private System.Windows.Forms.Button buttonStop;
 		private System.Windows.Forms.Button buttonCloseWindow;
 		private System.Windows.Forms.Button buttonRefresh;
+		private System.Windows.Forms.Button buttonBrowse;
 	}
 }
 

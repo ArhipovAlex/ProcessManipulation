@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Reflection;
 using System.Management;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace ProcessManipulation
 {
@@ -29,8 +30,9 @@ namespace ProcessManipulation
 		private void process_Exited(object sender, EventArgs e)
 		{
 			Process process = sender as Process;
-			listBoxStartedAssembles.Items.Remove(process.ProcessName);
-			listBoxAvalibleAssembles.Items.Add(process.ProcessName);
+			//listBoxStartedAssembles.Items.Remove(process.ProcessName);
+			//listBoxAvalibleAssembles.Items.Add(process.ProcessName);
+			MovingItem(listBoxStartedAssembles, listBoxAvalibleAssembles,process.ProcessName);
 			processes.Remove(process);
 			counter--;
 			for(int i=0;i<processes.Count;i++)
@@ -59,8 +61,9 @@ namespace ProcessManipulation
 			process.EnableRaisingEvents = true;
 			process.Exited+= process_Exited;
 			SendMessage(process.MainWindowHandle, WM_SETTEXT, (System.IntPtr)0, $"Child process №{processes.Count}");
-			listBoxStartedAssembles.Items.Add(process.ProcessName);
-			listBoxAvalibleAssembles.Items.Remove(process.ProcessName);
+			//listBoxStartedAssembles.Items.Add(process.ProcessName);
+			//listBoxAvalibleAssembles.Items.Remove(process.ProcessName);
+			MovingItem(listBoxAvalibleAssembles,listBoxStartedAssembles,process.ProcessName);
 		}
 		void ExecuteOnProcessByName(string name, ProcessDelegate func)
 		{
@@ -117,10 +120,19 @@ namespace ProcessManipulation
 			if (listBoxStartedAssembles.SelectedItem != null)
 			{
 				object obj = listBoxStartedAssembles.SelectedItem;
-				listBoxStartedAssembles.Items.Remove(obj);
+				//MovingItem(listBoxStartedAssembles, listBoxAvalibleAssembles,obj.ToString());
 				ExecuteOnProcessByName(obj.ToString(), Kill);
-			
 			}	
+		}
+		private void MovingItem(ListBox exportObj, ListBox importObj, string process)
+		{
+			exportObj.Items.Remove(process);
+			importObj.Items.Add(process);
+		}
+
+		private void buttonBrowse_Click(object sender, EventArgs e)
+		{
+			
 		}
 	}
 }
